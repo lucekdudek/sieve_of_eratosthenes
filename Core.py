@@ -1,4 +1,5 @@
-from threading import Thread, Event
+from threading import Thread
+from helper import timing
 
 
 class Core(Thread):
@@ -45,17 +46,21 @@ class Core(Thread):
                     temp = scope
                     break
             if temp:
-                s = set()
-                for n in temp:
-                    if self.__check_number(n):
-                        s.add(n)
-                self.scopes[temp] = s
+                self.scopes[temp] = self.__handle_numbers(temp)
 
     def stop(self):
         self.running = False
 
     def is_running(self):
         return self.running
+
+    @timing
+    def __handle_numbers(self, numbers):
+        s = set()
+        for n in numbers:
+            if self.__check_number(n):
+                s.add(n)
+        return s
 
     def __check_number(self, n):
         if n <= 1:

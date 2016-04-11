@@ -1,12 +1,12 @@
 from Core import Core
 import time
+from helper import timing
 
 
 class Main:
-    def __init__(self, number_of_threads, scope, parts):
+    def __init__(self, number_of_threads, scope):
         self.n = number_of_threads
         self.scope = scope
-        self.parts = parts
         self.result = set()
 
     def __str__(self):
@@ -18,7 +18,7 @@ class Main:
             cores.append(Core(i))
         for c in cores:
             c.start()
-        scopes = self.get_scopes(range(2, self.scope), self.parts)
+        scopes = self.get_scopes(range(2, self.scope), self.n)
         while self.some_core_are_running(cores):
             for c in cores:
                 if scopes and c.need_scope():
@@ -48,10 +48,12 @@ class Main:
 
 
 if __name__ == "__main__":
-    start = time.time()
-    m = Main(20, 1000, 100)
-    m.go()
-    start = time.time() - start
-    print(start)
-    print(m)
+
+    @timing
+    def main(cores, scope):
+        m = Main(cores, scope)
+        m.go()
+        return m
+    for i in range(1,51):
+        main(i, 1000000)
 
